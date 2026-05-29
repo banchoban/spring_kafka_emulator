@@ -4,7 +4,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,16 +24,15 @@ public class KafkaConsumer {
     @KafkaListener(
             topics = "${spring.kafka.topic.name}",
             groupId = "${spring.kafka.consumer.group-id}",
-            concurrency = "${kafka.listener.concurrency:1}"
+            concurrency = "${kafka.listener.concurrency}"
     )
-    public void consume(ConsumerRecord<String, String> record, Acknowledgment ack) {
+    public void consume(ConsumerRecord<String, String> record) {
         log.info(record.value());
-        long unixTime = System.currentTimeMillis();
+        long unixTime = System.currentTimeMillis() / 1000;
 
         try {
             KafkaMessageDTO message = objectMapper.readValue(record.value(), KafkaMessageDTO.class);
             this.databaseService.saveMessage(message.getMsgUUID(), message.getHead(), unixTime);
-            ack.acknowledge();
         } catch (InterruptedException e){
             Thread.currentThread().interrupt();
         } catch (Exception e) {

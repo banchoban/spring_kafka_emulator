@@ -1,18 +1,17 @@
 package com.example.test;
 
-import com.example.test.MessageEntity;
-import com.example.test.MessageRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @Service
 @RestController
 @RequestMapping("/api/delay")
 public class DatabaseService {
 
+    private static final Logger log = LoggerFactory.getLogger(DatabaseService.class);
     private final MessageRepository messageRepository;
     private long delay = 1000;
 
@@ -42,6 +41,7 @@ public class DatabaseService {
 
         Thread.sleep(this.delay);
 
+        log.info(entity.toString());
         this.messageRepository.save(entity);
     }
 }

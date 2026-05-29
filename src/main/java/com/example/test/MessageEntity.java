@@ -31,4 +31,10 @@ public class MessageEntity {
         this.timeRq = timeRq;
     }
 
+    @Override
+    public String toString() {
+
+        return String.format("{\"msgUuid\": \"%s\", \"head\": %s, \"timeRq\": %d}", msgUuid, head, timeRq);
+    }
+
 }
